@@ -1,4 +1,4 @@
-package framework.model.input;
+package framework.model.token.input;
 
 import java.util.Set;
 

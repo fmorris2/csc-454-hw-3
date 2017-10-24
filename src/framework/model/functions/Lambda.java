@@ -1,12 +1,12 @@
 package framework.model.functions;
 
-import framework.model.output.OutputToken;
 import framework.model.persistence.ReadableBag;
+import framework.model.token.output.OutputToken;
 
 public abstract class Lambda {
-	protected final ReadableBag STATE;
+	protected final ReadableBag<?> STATE;
 	
-	public Lambda(ReadableBag state) {
+	public Lambda(ReadableBag<?> state) {
 		STATE = state;
 	}
 	

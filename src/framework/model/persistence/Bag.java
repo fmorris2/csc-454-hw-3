@@ -3,7 +3,13 @@ package framework.model.persistence;
 import java.util.Map;
 import java.util.Set;
 
-public class Bag extends ReadableBag {
+import framework.model.Model;
+
+public class Bag<M extends Model> extends ReadableBag<M> {
+
+	public Bag(M model) {
+		super(model);
+	}
 
 	public Set<Map.Entry<String, Object>> getAll() {
 		return BAG.entrySet();
