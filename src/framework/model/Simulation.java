@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Simulation {
 	private List<Model> models;
+	private int tick = 1;
 	
 	public Simulation(Model... models) {
 		this.models = new ArrayList<>(Arrays.asList(models));
@@ -13,9 +14,11 @@ public class Simulation {
 	
 	public void run() {
 		while(true) {
+			System.out.println("[Simulation] Executing tick #" + tick);
 			for(Model m : models) {
 				m.tick();
 			}
+			tick++;
 		}
 	}
 	

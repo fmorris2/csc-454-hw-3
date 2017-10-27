@@ -77,15 +77,17 @@ public class HW3NetworkModel extends NetworkModel {
 	
 	private class HW3NetworkModelInfo {
 		private final Model XOR1 = new XORModel("XOR1").build();
-		//private final Model XOR2 = new XORModel("XOR2").build();
+		private final Model XOR2 = new XORModel("XOR2").build();
 		
 		public final List<Model> MODELS = new ArrayList<>(Arrays.asList(
-				XOR1//, XOR2
+				XOR1, XOR2
 		));
 		
 		public final List<Coupling> COUPLINGS = new ArrayList<>(Arrays.asList(
 				new Coupling(null, XOR1, CouplingType.INPUT_TO_INPUT),
-				new Coupling(XOR1, null, CouplingType.OUTPUT_TO_OUTPUT)
+				new Coupling(XOR1, null, CouplingType.OUTPUT_TO_OUTPUT),
+				new Coupling(null, XOR2, CouplingType.INPUT_TO_INPUT),
+				new Coupling(XOR2, null, CouplingType.OUTPUT_TO_OUTPUT)
 		));
 	}
 
