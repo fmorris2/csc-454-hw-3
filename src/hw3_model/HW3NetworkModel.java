@@ -1,5 +1,6 @@
 package hw3_model;
 
+import hw3_model.models.memory_model.MemoryModel;
 import hw3_model.models.xor.XORModel;
 import hw3_model.tokens.Bit;
 import hw3_model.tokens.One;
@@ -78,16 +79,23 @@ public class HW3NetworkModel extends NetworkModel {
 	private class HW3NetworkModelInfo {
 		private final Model XOR1 = new XORModel("XOR1").build();
 		private final Model XOR2 = new XORModel("XOR2").build();
+		private final Model MEM_MODEL = new MemoryModel("M").build();
 		
 		public final List<Model> MODELS = new ArrayList<>(Arrays.asList(
-				XOR1, XOR2
+				XOR1, XOR2, MEM_MODEL
 		));
 		
 		public final List<Coupling> COUPLINGS = new ArrayList<>(Arrays.asList(
+				//XOR1 COUPLINGS
 				new Coupling(null, XOR1, CouplingType.INPUT_TO_INPUT),
-				new Coupling(XOR1, null, CouplingType.OUTPUT_TO_OUTPUT),
-				new Coupling(null, XOR2, CouplingType.INPUT_TO_INPUT),
-				new Coupling(XOR2, null, CouplingType.OUTPUT_TO_OUTPUT)
+				new Coupling(XOR1, XOR2, CouplingType.OUTPUT_TO_INPUT),
+				
+				//XOR2 COUPLINGS
+				new Coupling(XOR2, null, CouplingType.OUTPUT_TO_OUTPUT),
+				new Coupling(XOR2, MEM_MODEL, CouplingType.OUTPUT_TO_INPUT),
+				
+				//MEM MODEL COUPLINGS
+				new Coupling(MEM_MODEL, XOR2, CouplingType.OUTPUT_TO_INPUT)
 		));
 	}
 

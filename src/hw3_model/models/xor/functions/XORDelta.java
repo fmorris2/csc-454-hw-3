@@ -18,6 +18,7 @@ public class XORDelta extends Delta {
 
 	@Override
 	protected void updateStateWithInput(InputToken[] input) {
+		System.out.println("XORDelta input length: " + input.length);
 		if(input.length == 2) {
 			Bit firstBit = (Bit)input[0];
 			Bit secondBit = (Bit)input[1];

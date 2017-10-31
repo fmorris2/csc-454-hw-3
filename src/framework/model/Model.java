@@ -66,28 +66,38 @@ public abstract class Model {
 	}
 	
 	public OutputToken[] executeLambda() {
-		log("State at internal tick #"+tick+": "+getStateString());
-		
 		output = lambda.execute();
-		log("Output at internal tick #"+tick+": ");
-		Arrays.stream(output).forEach(o -> System.out.println("\t"+o.getName()));
+		if(tick % internalTicks == 0) {
+			log("State at internal tick #"+tick+": "+getStateString());
+			log("Output at internal tick #"+tick+": ");
+			Arrays.stream(output).forEach(o -> System.out.println("\t"+o.getName()));
+		}
 		return output;
 	}
 	
 	public void executeDelta() {
 		delta.execute(input);
 		tick++;
+		if(internalTicks == 1) {
+			output = null;
+			input = null;
+		}
 	}
 	
 	public void addToInputBag(Token[] tokens) {
 		if(input == null)
 		{
+			log("addToInputBag - input is null");
 			input = new InputToken[tokens.length];
 			for(int i = 0; i < input.length; i++)
 				input[i] = (InputToken)tokens[i]; 
 		}
 		else
-			Stream.concat(Arrays.stream(input), Arrays.stream(tokens)).toArray(OutputToken[]::new);
+		{
+			log("addToInputBag - input is not null");
+			input = Stream.concat(Arrays.stream(input), Arrays.stream(tokens)).toArray(InputToken[]::new);
+		}
+		log("adding " + tokens.length + " tokens to input bag... input bag is now size " + input.length);
 	}
 	
 	public InputToken[] getInput() {
