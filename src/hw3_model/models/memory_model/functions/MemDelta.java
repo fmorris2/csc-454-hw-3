@@ -21,7 +21,7 @@ public class MemDelta extends Delta {
 	@Override
 	protected void updateStateWithInput(InputToken[] input) {
 		Queue<Bit> queue = STATE.get("queue");
-		System.out.println("MemDelta input length: " + input.length + ", queue size: " + queue.size());
+		debug("MemDelta input length: " + input.length + ", queue size: " + queue.size());
 		queue.poll();
 		if(input.length > 0)
 			queue.add((Bit)input[0]);

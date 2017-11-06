@@ -17,4 +17,9 @@ public abstract class Delta {
 		processPreviousState();
 		updateStateWithInput(input);
 	}
+	
+	public void debug(String str) {
+		if(STATE.getBool("debugMode"))
+			System.out.println("[Debug]["+getClass().getSimpleName()+"]: " + str);
+	}
 }

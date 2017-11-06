@@ -17,94 +17,120 @@ public abstract class Model {
 	public final Set<OutputToken> OUTPUT_SET;
 	protected final Bag<?> STATE;
 	
-	protected Lambda lambda;
-	protected Delta delta;
+	public static int numModels = 0;
+	
 	protected InputParser inputParser;
 	protected int internalTicks;
 	protected InputToken[] input;
 	protected OutputToken[] output;
+	protected Lambda lambda;
+	protected Delta delta;
 	protected int tick;
+	private int id;
+	private boolean receivesExternalInput;
 	
 	public Model() {
 		INPUT_SET = inputSet();
 		OUTPUT_SET = outputSet();
 		STATE = getBag();
+		STATE.add("debugMode", false);
 	}
 	
 	public Model build() {
-		lambda = lambda();
-		delta = delta();
 		inputParser = inputParser();
 		internalTicks = internalTicks();
+		lambda = lambda();
+		delta = delta();
 		tick = 1;
+		numModels++;
+		id = numModels;
 		return this;
 	}
 	
+	public Model receivesExternalInput(boolean b) {
+		receivesExternalInput = b;
+		return this;
+	}
+
 	protected abstract Bag<?> getBag();
 	protected abstract Set<InputToken> inputSet();
 	protected abstract Set<OutputToken> outputSet();
-	protected abstract Lambda lambda();
-	protected abstract Delta delta();
 	protected abstract InputParser inputParser();
 	protected abstract int internalTicks();
 	protected abstract String getModelName();
 	protected abstract String getStateString();
+	protected abstract Lambda lambda();
+	protected abstract Delta delta();
 	
 	public OutputToken[] tick() {
-		output = null;
-		input = null;
-		if(inputParser != null) {
+		if(receivesExternalInput && inputParser != null) {
 			input = inputParser.parseInput();
 		}
 		
 		for(int i = 0; i < internalTicks; i++) {
 			executeLambda();
-			executeDelta();
+			executeDeltaOnce();
 		}
 		
 		return output;
 	}
 	
+	public void executeDelta() {
+		for(int i = 0; i < internalTicks; i++) {
+			executeDeltaOnce();
+		}
+	}
+	
+	private void executeDeltaOnce() {
+		debug("delta is being executed for " + getModelName());
+		delta.execute(input);
+		tick++;
+	}
+	
 	public OutputToken[] executeLambda() {
+		debug("lambda is being executed for " + getModelName());
 		output = lambda.execute();
 		if(tick % internalTicks == 0) {
-			log("State at internal tick #"+tick+": "+getStateString());
-			log("Output at internal tick #"+tick+": ");
-			Arrays.stream(output).forEach(o -> System.out.println("\t"+o.getName()));
+			debug("State at internal tick #"+tick+": "+getStateString());
+			debug("Output at internal tick #"+tick+": ");
+			Arrays.stream(output).forEach(o -> debug("\t"+o.getName()));
 		}
 		return output;
 	}
 	
-	public void executeDelta() {
-		delta.execute(input);
-		tick++;
-		if(internalTicks == 1) {
-			output = null;
-			input = null;
-		}
+	public void resetInputAndOutput() {
+		output = null;
+		input = null;
 	}
 	
 	public void addToInputBag(Token[] tokens) {
 		if(input == null)
 		{
-			log("addToInputBag - input is null");
 			input = new InputToken[tokens.length];
 			for(int i = 0; i < input.length; i++)
 				input[i] = (InputToken)tokens[i]; 
 		}
 		else
 		{
-			log("addToInputBag - input is not null");
 			input = Stream.concat(Arrays.stream(input), Arrays.stream(tokens)).toArray(InputToken[]::new);
 		}
-		log("adding " + tokens.length + " tokens to input bag... input bag is now size " + input.length);
+		debug("adding " + tokens.length + " tokens to input bag... input bag is now size " + input.length);
 	}
 	
 	public InputToken[] getInput() {
 		return input;
 	}
 	
-	private void log(String str) {
-		System.out.println("["+getModelName()+"] - " + str);
+	protected void log(String str) {
+		System.out.println("["+getModelName()+ " " + id +"] - " + str);
+	}
+	
+	protected void debug(String str) {
+		if(STATE.getBool("debugMode"))
+			log(str);
+	}
+	
+	public void setDebugMode(boolean debug) {
+		STATE.addOrUpdate("debugMode", debug);
 	}
 }

@@ -18,9 +18,7 @@ import framework.model.token.input.InputToken;
 import framework.model.token.output.OutputToken;
 
 public class XORModel extends AtomicModel {
-	private final String NAME;
-	public XORModel(String name) {
-		NAME = name;
+	public XORModel() {
 		STATE.add("bit", new Zero());
 	}
 	
@@ -56,7 +54,7 @@ public class XORModel extends AtomicModel {
 
 	@Override
 	protected String getModelName() {
-		return NAME;
+		return "XOR";
 	}
 
 	@Override

@@ -22,12 +22,12 @@ import framework.model.token.input.InputParser;
 import framework.model.token.input.InputToken;
 import framework.model.token.output.OutputToken;
 
-public class HW3NetworkModel extends NetworkModel {
-
-	private final HW3NetworkModelInfo INFO = new HW3NetworkModelInfo();
+public class ExampleNetwork extends NetworkModel {
 	
-	public HW3NetworkModel() {
-		this.receivesExternalInput(true);
+	private final ExampleNetworkInfo INFO = new ExampleNetworkInfo();
+	
+	public ExampleNetwork() {
+		receivesExternalInput(true);
 	}
 	
 	@Override
@@ -42,7 +42,7 @@ public class HW3NetworkModel extends NetworkModel {
 
 	@Override
 	protected Bag<?> getBag() {
-		return new Bag<HW3NetworkModel>(this);
+		return new Bag<ExampleNetwork>(this);
 	}
 
 	@Override
@@ -64,12 +64,12 @@ public class HW3NetworkModel extends NetworkModel {
 
 	@Override
 	protected int internalTicks() {
-		return 3;
+		return 1;
 	}
 
 	@Override
 	protected String getModelName() {
-		return "HW3 Network Model";
+		return "Example Model";
 	}
 
 	@Override
@@ -77,26 +77,27 @@ public class HW3NetworkModel extends NetworkModel {
 		return "N/A";
 	}
 	
-	private class HW3NetworkModelInfo {
-		private final Model XOR1 = new XORModel().build();
-		private final Model XOR2 = new XORModel().build();
+	private class ExampleNetworkInfo {
+		private final Model HW3_MODEL_1 = new HW3NetworkModel().build();
+		private final Model HW3_MODEL_2 = new HW3NetworkModel().build();
+		private final Model XOR_MODEL = new XORModel().build();
 		private final Model MEM_MODEL = new MemoryModel().build();
 		
 		public final List<Model> MODELS = new ArrayList<>(Arrays.asList(
-				XOR1, XOR2, MEM_MODEL
+				HW3_MODEL_1, HW3_MODEL_2, XOR_MODEL, MEM_MODEL
 		));
 		
 		public final List<Coupling> COUPLINGS = new ArrayList<>(Arrays.asList(
-				//XOR1 COUPLINGS
-				new Coupling(null, XOR1, CouplingType.INPUT_TO_INPUT),
-				new Coupling(XOR1, XOR2, CouplingType.OUTPUT_TO_INPUT),
 				
-				//XOR2 COUPLINGS
-				new Coupling(XOR2, null, CouplingType.OUTPUT_TO_OUTPUT),
-				new Coupling(XOR2, MEM_MODEL, CouplingType.OUTPUT_TO_INPUT),
+				new Coupling(null, HW3_MODEL_1, CouplingType.INPUT_TO_INPUT),
+				new Coupling(null, XOR_MODEL, CouplingType.INPUT_TO_INPUT),
 				
-				//MEM MODEL COUPLINGS
-				new Coupling(MEM_MODEL, XOR2, CouplingType.OUTPUT_TO_INPUT)
+				new Coupling(HW3_MODEL_1, HW3_MODEL_2, CouplingType.OUTPUT_TO_INPUT),
+				new Coupling(XOR_MODEL, MEM_MODEL, CouplingType.OUTPUT_TO_INPUT),
+				new Coupling(MEM_MODEL, HW3_MODEL_2, CouplingType.OUTPUT_TO_INPUT),
+				
+				new Coupling(HW3_MODEL_2, null, CouplingType.OUTPUT_TO_OUTPUT)
 		));
 	}
+
 }

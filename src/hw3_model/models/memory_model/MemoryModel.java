@@ -19,10 +19,8 @@ import framework.model.token.input.InputToken;
 import framework.model.token.output.OutputToken;
 
 public class MemoryModel extends AtomicModel {
-	private final String NAME;
 	
-	public MemoryModel(String name) {
-		NAME = name;
+	public MemoryModel() {
 		STATE.add("queue", new ArrayDeque<>(Arrays.asList(new Zero(), new Zero())));
 	}
 
@@ -58,7 +56,7 @@ public class MemoryModel extends AtomicModel {
 
 	@Override
 	protected String getModelName() {
-		return NAME;
+		return "M";
 	}
 
 	@Override

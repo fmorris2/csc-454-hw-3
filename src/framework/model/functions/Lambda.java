@@ -12,4 +12,8 @@ public abstract class Lambda {
 	
 	public abstract OutputToken[] execute();
 	
+	public void debug(String str) {
+		if(STATE.getBool("debugMode"))
+			System.out.println("[Debug]["+this.getClass().getSimpleName()+"]: " + str);
+	}
 }

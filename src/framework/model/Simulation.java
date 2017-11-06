@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import framework.model.token.output.OutputToken;
+
 public class Simulation {
 	private List<Model> models;
 	private int tick = 1;
@@ -16,7 +18,10 @@ public class Simulation {
 		while(true) {
 			System.out.println("[Simulation] Executing tick #" + tick);
 			for(Model m : models) {
-				m.tick();
+				OutputToken[] output = m.tick();
+				m.resetInputAndOutput();
+				System.out.println(m.getModelName() + " output at simulation tick #"+tick+": ");
+				Arrays.stream(output).forEach(o -> System.out.println("\t"+o.getName()));
 			}
 			tick++;
 		}

@@ -7,28 +7,28 @@ import framework.model.coupling.Coupling;
 import framework.model.persistence.Bag;
 import framework.model.token.input.InputToken;
 
-public abstract class NetworkDelta extends Delta {
-	
+public class NetworkDelta extends Delta {
 	private final List<Model> SUB_MODELS;
 	private final List<Coupling> COUPLINGS;
-
-	public NetworkDelta(Bag<?> state, List<Model> subModels, List<Coupling> couplings) {
+	public NetworkDelta(Bag<?> state, List<Model> models, List<Coupling> couplings) {
 		super(state);
-		SUB_MODELS = subModels;
+		SUB_MODELS = models;
 		COUPLINGS = couplings;
 	}
 
 	@Override
+	protected void processPreviousState() {}
+
+	@Override
 	protected void updateStateWithInput(InputToken[] input) {
-		//execute deltas for all sub models
-		for(Model m : SUB_MODELS) {
-			
-			COUPLINGS.stream() //find couplings that are network input -> model input
-				.filter(coupling -> coupling.FIRST == null && coupling.LAST == m)
-				.forEach(coupling -> coupling.LAST.addToInputBag(input)); //add network input to model's input bag
-			
+		//route network input to necessary sub models
+		COUPLINGS.stream().filter(c -> c.FIRST == null).forEach(c -> c.LAST.addToInputBag(input));
+		
+		//call everybodies delta
+		SUB_MODELS.stream().forEach(m -> {
 			m.executeDelta();
-		}
+			m.resetInputAndOutput();
+		});
 	}
 
 }
